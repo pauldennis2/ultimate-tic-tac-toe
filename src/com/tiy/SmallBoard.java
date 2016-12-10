@@ -9,8 +9,14 @@ public class SmallBoard {
     char statusToken = ' '; //Possibilities: ' ', 'X', 'O', 'T'
     char[][] board = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
-    public SmallBoard() {
+    public static final char WILDCARD_TOKEN = 'W';
+
+    public SmallBoard () {
         board = new char[][] {{' ',' ',' '}, {' ',' ', ' '}, {' ', ' ',' '}};
+    }
+
+    public SmallBoard (char[][] board) {
+        this.board = board;
     }
 
     public char getStatusToken () {
@@ -19,8 +25,14 @@ public class SmallBoard {
         char diagonalWinningToken = diagonalWinner(board);
         if (rowWinningToken != ' ') {
             statusToken = rowWinningToken;
-
         }
+        if (columnWinningToken != ' ') {
+            statusToken = columnWinningToken;
+        }
+        if (diagonalWinningToken != ' ') {
+            statusToken = diagonalWinningToken;
+        }
+        //This works because on a regular board following normal rules you can't have two winners
         return statusToken;
     }
 
@@ -67,6 +79,48 @@ public class SmallBoard {
         }
         return ' ';
     }
+
+    public char getStatusTokenWithWildCards (char p1Token, char p2Token) {
+        char[][] boardWithFirstToken = new char[3][3];
+        char[][] boardWithSecondToken = new char[3][3];
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                char c = board[row][col];
+                if (c != WILDCARD_TOKEN) {
+                    boardWithFirstToken[row][col] = board[row][col];
+                    boardWithSecondToken[row][col] = board[row][col];
+                } else {
+                    boardWithFirstToken[row][col] = p1Token;
+                    boardWithSecondToken[row][col] = p2Token;
+                }
+            }
+        } //At the end of this loop we should have two boards that are copies of the main board except
+        //Any 'W' wildcard tokens should have been replaced with the player tokens
+
+        SmallBoard p1Board = new SmallBoard(boardWithFirstToken);
+        SmallBoard p2Board = new SmallBoard(boardWithSecondToken);
+        char p1BoardToken = p1Board.getStatusToken();
+        char p2BoardToken = p2Board.getStatusToken();
+
+        System.out.println("p1 board:");
+        System.out.println(p1Board);
+        System.out.println("Token: -" + p1BoardToken + "-");
+        System.out.println("p2 board:");
+        System.out.println(p2Board);
+        System.out.println("Token: -" + p2BoardToken + "-");
+
+
+
+        if ((p1BoardToken == p1Token) && (p2BoardToken == p2Token)) { //If they both won
+            return 'W';
+        } else if (p1BoardToken == p1Token) { //Only p1 wins
+            return p1Token;
+        } else if (p2BoardToken == p2Token) {
+            return p2Token;
+        }
+        return ' '; //nobody has won yet
+    }
+
     private static char columnWinner (char[][] thisBoard) {
         for (int column = 0; column < 3; column++) {
             char c = thisBoard[0][column];//Starting from the top char in the column

@@ -15,6 +15,11 @@ public abstract class Player {
         this.name = name;
         this.token = token;
         this.type = type;
+
+        if (token == 'W' || token == 'T') {
+            System.out.println("These tokens are reserved.");
+            throw new AssertionError();
+        }
     }
 
     public abstract int getMove(SmallBoard board);

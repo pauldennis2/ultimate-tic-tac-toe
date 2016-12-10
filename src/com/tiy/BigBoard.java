@@ -93,6 +93,22 @@ public class BigBoard {
      */
 
     public int statusUpdate () {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                char statusToken = boardArray[row][col].getStatusToken();
+                if (statusToken == 'T' && tiedSquareCountsForBoth) {
+                    statusBoard.placeToken(row, col, 'W');
+                } else {
+                    statusBoard.placeToken(row, col, statusToken);
+                }
+            }
+        }
+        char overallStatusToken = statusBoard.getStatusToken();
+        if (overallStatusToken == 'T') {
+            return -1;
+        } else if (overallStatusToken != ' ') { //Not tied and not empty; must be a win
+            return 1;
+        }
         return 0;
     }
 

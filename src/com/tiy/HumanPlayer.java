@@ -23,7 +23,7 @@ public class HumanPlayer extends Player {
 
     public int getMove (SmallBoard smallBoard) {
         System.out.println(smallBoard);
-        System.out.println("Please enter board number, or keyword (rules, help, exit)");
+        System.out.println("Please enter square number, or keyword (rules, help, exit)");
         String response = null;
         int row = 0;
         int col = 0;

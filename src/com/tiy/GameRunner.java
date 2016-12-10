@@ -1,5 +1,7 @@
 package com.tiy;
 
+import java.util.Random;
+
 public class GameRunner {
 
     SafeScanner scanner;
@@ -52,6 +54,8 @@ public class GameRunner {
                 player2 = null;
                 break;
         }
+        //Reminder: 'W' and 'T' are not allowed as tokens. Any other characters should be OK if we want to go back
+        //And allow the user to pick their token.
         if (boring) {
             playRegularTicTacToe();
         } else {
@@ -133,7 +137,41 @@ public class GameRunner {
                     record.addResult(activePlayer.getName() + " won");
                     record.writeToFile();
                     break;
+            } //End switch(bigBoard.statusupdate())
+        }//End main game loop
+    }
+
+    public void testWildCardThingee () {
+        System.out.println("Testing wildcard detection levels with 6 random examples");
+        Random random = new Random();
+        SmallBoard[] boards = new SmallBoard[6];
+        for (int i = 0; i < 6; i++) {
+            char[][] board = new char[3][3];
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    int randomNum = random.nextInt(3);
+                    switch (randomNum) {
+                        case 0:
+                            if (random.nextBoolean()) {
+                                board[row][col] = 'W';
+                            } else {
+                                board[row][col] = ' ';
+                            }
+                            break;
+                        case 1:
+                            board[row][col] = 'X';
+                            break;
+                        case 2:
+                            board[row][col] = 'O';
+                            break;
+                    }
+                    boards[i] = new SmallBoard(board);
+
+                }
             }
+            System.out.println("Board " + i + ":");
+            System.out.println(boards[i]);
+            System.out.println("Returns:" + boards[i].getStatusTokenWithWildCards('X', 'O'));
         }
     }
 }
