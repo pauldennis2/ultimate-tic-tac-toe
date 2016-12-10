@@ -13,16 +13,16 @@ public class HumanPlayer extends Player {
 
     private int numTimesHelpTriggered;
 
-    private static boolean rulesDisplayed = false;//Yes this really is static
+    private static boolean rulesDisplayed = true;//Yes this really is static
 
     public HumanPlayer (String name, char token) {
-        super(name, token);
+        super(name, token, "human");
         scanner = new SafeScanner(System.in);
         moveInputScanner = new Scanner(System.in);
     }
 
-    public int getMove (SmallBoard board) {
-        System.out.println(board);
+    public int getMove (SmallBoard smallBoard) {
+        System.out.println(smallBoard);
         System.out.println("Please enter board number, or keyword (rules, help, exit)");
         String response = null;
         int row = 0;
@@ -40,7 +40,7 @@ public class HumanPlayer extends Player {
                 //Check with the board to make sure it's not full.
                 row = userMove/3;
                 col = userMove%3;
-                if (board.get(row, col) != ' ') {
+                if (smallBoard.get(row, col) != ' ') {
                     System.out.println("Can't move there - already taken.");
                 }
             } catch (NumberFormatException ex) {
@@ -52,18 +52,16 @@ public class HumanPlayer extends Player {
                     this.printGameHelpInfo();
                 }
             }
-        } while (board.get(row, col) != ' ');
+        } while (smallBoard.get(row, col) != ' ');
         int answer = row*3 + col + 1;
         return answer;
     }
 
-    public int getMove (BigBoard board) {
+    public int getMove (BigBoard bigBoard) {
         if (!rulesDisplayed) {
             this.printGameHelpInfo();
             this.printGameRules();
         }
-
-        System.out.println(board);
         System.out.println("You can move anywhere. Please tell me the big board number first.");
         System.out.println("Please enter board number, or keyword (rules, help, exit)");
         String response = null;
@@ -92,7 +90,7 @@ public class HumanPlayer extends Player {
                     this.printGameHelpInfo();
                 }
             }
-        } while (board.get(row, col).isFull());
+        } while (bigBoard.get(row, col).getStatusToken() == 'T'); //if the board selected is full, send them back
         int answer = row*3 + col + 1;
         return answer;
     }
@@ -140,6 +138,7 @@ public class HumanPlayer extends Player {
         System.out.println("If this rule is on, any small board that is full (all nine spots) counts for both players.");
         System.out.println("This can theoretically generate a tie. In CPU VS Human matches this goes to the computer as a win.");
         System.out.println("Otherwise it is a tie, even stevens, fair and square, equal.");
+        System.out.println("If Wildcard Rule is on, tied squares will display with a 'W'.");
         System.out.print("Wildcard Rule is currently: something");
         /*if (bigBoard.tiedSquaresCountForBoth()) {
             System.out.println("ON");

@@ -87,6 +87,15 @@ public class BigBoard {
         return false;
     }
 
+    /**
+     *
+     * @return -1 if tied; 1 if 1, 0 if still going
+     */
+
+    public int statusUpdate () {
+        return 0;
+    }
+
     //Clears entire board! Use with caution.
     public void clear () {
         System.out.println("Board cleared.");

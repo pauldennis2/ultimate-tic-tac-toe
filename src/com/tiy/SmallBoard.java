@@ -6,22 +6,22 @@ package com.tiy;
 public class SmallBoard {
 
     boolean boardIsFull;
-    char winningToken = ' ';
+    char statusToken = ' '; //Possibilities: ' ', 'X', 'O', 'T'
     char[][] board = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
     public SmallBoard() {
         board = new char[][] {{' ',' ',' '}, {' ',' ', ' '}, {' ', ' ',' '}};
     }
 
-    public char getWinningToken () {
+    public char getStatusToken () {
         char rowWinningToken = rowWinner(board);
         char columnWinningToken = columnWinner(board);
         char diagonalWinningToken = diagonalWinner(board);
         if (rowWinningToken != ' ') {
-            winningToken = rowWinningToken;
+            statusToken = rowWinningToken;
 
         }
-        return winningToken;
+        return statusToken;
     }
 
     public char get (int row, int col) {
@@ -49,9 +49,9 @@ public class SmallBoard {
         return false;
     }
 
-    public boolean isFull() {
+    /*public boolean isFull() {
         return boardIsFull;
-    }
+    }*/
 
     private static char rowWinner (char[][] thisBoard) {
         for (int row = 0; row < 3; row++) {

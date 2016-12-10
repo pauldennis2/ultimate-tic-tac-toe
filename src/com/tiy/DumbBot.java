@@ -10,7 +10,7 @@ public class DumbBot extends Player {
     public static final String[] BOT_NAMES = {"Joe", "Sal", "Jon", "Sue", "Fred", "Bob"};
 
     public DumbBot (char token) {
-        super(BOT_NAMES[new Random().nextInt(6)] + "Bot", token);
+        super(BOT_NAMES[new Random().nextInt(6)] + "Bot", token, "dumbbot");
     }
 
     public int getMove (SmallBoard board) {
