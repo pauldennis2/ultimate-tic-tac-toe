@@ -1,12 +1,14 @@
 package com.tiy;
 
+import java.util.ArrayList;
+
 /**
  * Created by erronius on 12/9/2016.
  */
 public class BigBoard {
 
-    SmallBoard[][] boardArray;
-    SmallBoard statusBoard;
+    private SmallBoard[][] boardArray;
+    private SmallBoard statusBoard;
 
     private boolean tiedSquareCountsForBoth;
 
@@ -19,6 +21,30 @@ public class BigBoard {
                 boardArray[row][col] = new SmallBoard();
             }
         }
+    }
+
+    public SmallBoard getStatusBoard () {
+        return statusBoard;
+    }
+
+    public ArrayList<SmallBoard> getEdgeBoards () {
+        ArrayList<SmallBoard> edgeBoards = new ArrayList<SmallBoard>();
+        //Edge boards are: 0,1 1,0 1,2 2,1
+        edgeBoards.add(boardArray[0][1]);
+        edgeBoards.add(boardArray[1][0]);
+        edgeBoards.add(boardArray[1][2]);
+        edgeBoards.add(boardArray[2][1]);
+        return edgeBoards;
+    }
+
+    public ArrayList<SmallBoard> getCornerBoards () {
+        ArrayList<SmallBoard> cornerBoards = new ArrayList<SmallBoard>();
+        //Corner boards are: 0,0 0,2 2,0 2,2
+        cornerBoards.add(boardArray[0][0]);
+        cornerBoards.add(boardArray[0][2]);
+        cornerBoards.add(boardArray[2][0]);
+        cornerBoards.add(boardArray[2][2]);
+        return cornerBoards;
     }
 
     public boolean tiedSquaresCountForBoth () {

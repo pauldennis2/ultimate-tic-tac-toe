@@ -6,7 +6,7 @@ package com.tiy;
 public class SmallBoard {
 
     boolean boardIsFull;
-    char statusToken = ' '; //Possibilities: ' ', 'X', 'O', 'T'
+    char statusToken = ' '; //Possibilities: ' ', 'X', 'O' (or custom tokens). 'W' or 'T' possible for status boards
     char[][] board = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
     public static final char WILDCARD_TOKEN = 'W';
@@ -17,6 +17,10 @@ public class SmallBoard {
 
     public SmallBoard (char[][] board) {
         this.board = board;
+    }
+
+    public char[][] getBoard () {
+        return board;
     }
 
     public char getStatusToken () {
@@ -61,10 +65,6 @@ public class SmallBoard {
         return false;
     }
 
-    /*public boolean isFull() {
-        return boardIsFull;
-    }*/
-
     private static char rowWinner (char[][] thisBoard) {
         for (int row = 0; row < 3; row++) {
             char c = thisBoard[row][0];//Starting from the leftmost char in the row
@@ -80,6 +80,8 @@ public class SmallBoard {
         return ' ';
     }
 
+    //Does this method care about the order of the tokens? I don't think so, need to make sure
+    //Also note that this method should only ever be called from a status board.
     public char getStatusTokenWithWildCards (char p1Token, char p2Token) {
         char[][] boardWithFirstToken = new char[3][3];
         char[][] boardWithSecondToken = new char[3][3];
@@ -101,18 +103,19 @@ public class SmallBoard {
         SmallBoard p2Board = new SmallBoard(boardWithSecondToken);
         char p1BoardToken = p1Board.getStatusToken();
         char p2BoardToken = p2Board.getStatusToken();
-
+        /*
         System.out.println("p1 board:");
         System.out.println(p1Board);
         System.out.println("Token: -" + p1BoardToken + "-");
         System.out.println("p2 board:");
         System.out.println(p2Board);
         System.out.println("Token: -" + p2BoardToken + "-");
+        */
 
 
 
         if ((p1BoardToken == p1Token) && (p2BoardToken == p2Token)) { //If they both won
-            return 'W';
+            return WILDCARD_TOKEN;
         } else if (p1BoardToken == p1Token) { //Only p1 wins
             return p1Token;
         } else if (p2BoardToken == p2Token) {
@@ -164,10 +167,6 @@ public class SmallBoard {
         }
         return true;
     }
-
-    /*public String toString () {
-        return new String(board[0]) + "\n" + new String(board[1]) + "\n" + new String(board[2]);
-    }*/
 
     public String toString() {
         String response = "";

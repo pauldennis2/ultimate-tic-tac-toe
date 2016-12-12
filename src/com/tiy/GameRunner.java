@@ -15,7 +15,8 @@ public class GameRunner {
     int numHumPlayers;
 
     public static void main(String[] args) {
-        new GameRunner().playGame();
+        new GameRunner().testSmartBotEvaluation();
+        //new GameRunner().playGame();
     }
 
     public GameRunner() {
@@ -173,5 +174,35 @@ public class GameRunner {
             System.out.println(boards[i]);
             System.out.println("Returns:" + boards[i].getStatusTokenWithWildCards('X', 'O'));
         }
+    }
+
+    public void testSmartBotEvaluation () {
+        SmartBot smarty = new SmartBot('O', 0,'X');
+        System.out.println(smarty.getName() + " will evaluate random boards.");
+        for (int i = 0; i < 4; i++) {
+            BigBoard bigBoard = GameRunner.createRandomBoard(85);
+            System.out.println(bigBoard);
+            System.out.println(smarty.getName() + "'s evaluation of this board:" + smarty.evaluateBoard(bigBoard));
+        }
+    }
+
+    public static BigBoard createRandomBoard (int numTokens) {
+        BigBoard bigBoard = new BigBoard();
+        Random random = new Random();
+        for (int i = 0; i < numTokens; i++) {
+            int bigRow = random.nextInt(3);
+            int bigCol = random.nextInt(3);
+            int smallRow = random.nextInt(3);
+            int smallCol = random.nextInt(3);
+            char token;
+            if (random.nextBoolean()) {
+                token = 'X';
+            } else {
+                token = 'O';
+            }
+            bigBoard.placeToken(bigRow, bigCol, smallRow, smallCol, token);
+        }
+        bigBoard.statusUpdate();
+        return bigBoard;
     }
 }
