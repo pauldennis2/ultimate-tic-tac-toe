@@ -26,8 +26,9 @@ public class GameRunner {
 
     public void playGame () {
         System.out.println("Welcome to (Ultimate) Tic Tac Toe.");
-        System.out.println("Puss out and play regular TTT?");
-        boolean boring = scanner.nextYesNoAnswer();
+        //System.out.println("Wimp out and play regular TTT?");
+        //boolean boring = scanner.nextYesNoAnswer();
+        boolean boring = false;
 
         System.out.println("Input number of human players (0, 1, or 2):");
         numHumPlayers = scanner.nextIntInRange(0, 2);
@@ -83,8 +84,9 @@ public class GameRunner {
 
         int currentSmallBoard = 0;
         Player activePlayer = player1;
-        Player nonActivePlayer = player2;
-        while (true) {
+        Player nonActivePlayer = player2; //ApNap!
+        boolean playing = true;
+        while (playing) {
             System.out.println(activePlayer.getName() + "'s turn.");
             if (numHumPlayers > 0) {
                 System.out.println(bigBoard);
@@ -102,7 +104,7 @@ public class GameRunner {
 
             SmallBoard activeSmallBoard = bigBoard.get(row, col);
             System.out.println("You are on board " + currentSmallBoard);
-            int smallBoardMoveLoc = player1.getMove(activeSmallBoard);
+            int smallBoardMoveLoc = activePlayer.getMove(activeSmallBoard);
             if (smallBoardMoveLoc == -1) {
                 System.out.println("Have a nice day!");
                 return;
@@ -112,24 +114,19 @@ public class GameRunner {
 
             bigBoard.placeToken(row, col, smallRow, smallCol, activePlayer.getToken());
             record.addTurn(row, col, smallRow, smallCol);
-            //Swap activePlayer
-            activePlayer = nonActivePlayer;
-            if (activePlayer.equals(player1)) {
-                nonActivePlayer = player2;
-            } else {
-                nonActivePlayer = player1;
-            }
+
 
             switch (bigBoard.statusUpdate()) {
                 case -1:
                     System.out.println("Game is tied.");
                     record.addResult("tied");
                     record.writeToFile();
+                    playing = false;
                     break;
                 case 0:
                     //logic to determine next small board
                     currentSmallBoard = smallBoardMoveLoc;
-                    if (bigBoard.get(smallRow, smallCol).getStatusToken() != ' ') {//if the board is not won or tied
+                    if (bigBoard.get(smallRow, smallCol).getStatusToken() != ' ') {//if the board is won or tied
                         currentSmallBoard = 0; //This means they can pick anywhere
                     }
                     break;
@@ -137,8 +134,19 @@ public class GameRunner {
                     System.out.println(activePlayer.getName() + " wins!");
                     record.addResult(activePlayer.getName() + " won");
                     record.writeToFile();
+                    playing = false;
                     break;
             } //End switch(bigBoard.statusupdate())
+            //Swap activePlayer
+            activePlayer = nonActivePlayer;
+            if (activePlayer.equals(player1)) {
+                nonActivePlayer = player2;
+            } else {
+                nonActivePlayer = player1;
+            }
+            if (numHumPlayers == 0) {
+                System.out.println(bigBoard);
+            }
         }//End main game loop
     }
 
@@ -177,13 +185,37 @@ public class GameRunner {
     }
 
     public void testSmartBotEvaluation () {
-        SmartBot smarty = new SmartBot('O', 0,'X');
-        System.out.println(smarty.getName() + " will evaluate random boards.");
+        SmartBot smarty = new SmartBot('O', 0,'X', bigBoard);
+        System.out.println(smarty.getName() + " (O) will evaluate random boards.");
         for (int i = 0; i < 4; i++) {
             BigBoard bigBoard = GameRunner.createRandomBoard(85);
             System.out.println(bigBoard);
             System.out.println(smarty.getName() + "'s evaluation of this board:" + smarty.evaluateBoard(bigBoard));
         }
+        /*for (int i = 0; i < 6; i++) {
+            SmallBoard smallBoard = GameRunner.createRandomSmallBoard(7);
+            System.out.println(smallBoard);
+            System.out.println(smarty.getName() + "'s evaluation of this board:");
+            System.out.println("X has winning move at :" + SmartBot.tokenHasWinningMove(smallBoard, 'X') + " (-1 if no winning move)");
+            System.out.println("O has winning move at :" + SmartBot.tokenHasWinningMove(smallBoard, 'O') + " (-1 if no winning move)");
+        }*/
+    }
+
+    public static SmallBoard createRandomSmallBoard (int numTokens) {
+        SmallBoard smallBoard = new SmallBoard();
+        Random random = new Random();
+        for (int i = 0; i < numTokens; i++) {
+            int row = random.nextInt(3);
+            int col = random.nextInt(3);
+            char token;
+            if (random.nextBoolean()) {
+                token = 'X';
+            } else {
+                token = 'O';
+            }
+            smallBoard.placeToken(row, col, token);
+        }
+        return smallBoard;
     }
 
     public static BigBoard createRandomBoard (int numTokens) {

@@ -138,6 +138,64 @@ public class BigBoard {
         return 0;
     }
 
+    /**
+     *
+     * @param currentSmallBoardNum - the current small board we have to play on. 0 if open
+     * @param token - the token to place
+     * @return an ArrayList<BigBoard> of possibilities of what the board will look like after the move
+     */
+    public ArrayList<BigBoard> getPossibleMoves (int currentSmallBoardNum, char token) {
+        ArrayList<BigBoard> possibleMoves = new ArrayList<BigBoard>();
+        if (currentSmallBoardNum == 0) {
+            //can move anywhere; more complicated
+            for (int bigRow = 0; bigRow < 3; bigRow++) {
+                for (int bigCol = 0; bigCol < 3; bigCol++) {
+                    SmallBoard currentSmallBoard = this.get(bigRow, bigCol);
+                    for (int smallRow = 0; smallRow < 3; smallRow++) {
+                        for (int smallCol = 0; smallCol < 3; smallCol++) {
+                            if (currentSmallBoard.get(smallRow, smallCol) == ' ') {
+                                BigBoard newBoard = this.copy();
+                                newBoard.placeToken(bigRow, bigCol, smallRow, smallCol, token);
+                                possibleMoves.add(newBoard);
+                                //We've created a new copy of the board with the potential move and added it to the list
+                            }
+                        }
+                    }
+                }
+            }
+        } //End if currentSmallBoardNum == 0
+        else { //currentSmallBoardNum != 0, we are restricted to one smallBoard to move in
+            int bigRow = (currentSmallBoardNum - 1) / 3;
+            int bigCol = (currentSmallBoardNum - 1) % 3;
+            SmallBoard currentSmallBoard = this.get(bigRow, bigCol);
+            for (int smallRow = 0; smallRow < 3; smallRow++) {
+                for (int smallCol = 0; smallCol < 3; smallCol++) {
+                    if (currentSmallBoard.get(smallRow, smallCol) == ' ') {
+                        BigBoard newBoard = this.copy();
+                        newBoard.placeToken(bigRow, bigCol, smallRow, smallCol, token);
+                        possibleMoves.add(newBoard);
+                    }
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    public BigBoard copy () {
+        BigBoard copy = new BigBoard();
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                SmallBoard smallBoard = this.get(row, col);
+                for (int smallRow = 0; smallRow < 3; smallRow++) {
+                    for (int smallCol = 0; smallCol < 3; smallCol++) {
+                        copy.placeToken(row, col, smallRow, smallCol, smallBoard.get(smallRow, smallCol));
+                    }
+                }
+            }
+        }
+        return copy;
+    }
+
     //Clears entire board! Use with caution.
     public void clear () {
         System.out.println("Board cleared.");

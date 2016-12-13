@@ -36,6 +36,9 @@ public class SmallBoard {
         if (diagonalWinningToken != ' ') {
             statusToken = diagonalWinningToken;
         }
+        if (this.boardIsFull()) {
+            return 'T';
+        }
         //This works because on a regular board following normal rules you can't have two winners
         return statusToken;
     }
@@ -73,6 +76,40 @@ public class SmallBoard {
             }
             if (c == thisBoard[row][1]) {
                 if (c == thisBoard[row][2]) {
+                    return c;
+                }
+            }
+        }
+        return ' ';
+    }
+
+    private static char columnWinner (char[][] thisBoard) {
+        for (int column = 0; column < 3; column++) {
+            char c = thisBoard[0][column];//Starting from the top char in the column
+            if (c == ' ') {
+                continue;
+            }
+            if (c == thisBoard[1][column]) {
+                if (c == thisBoard[2][column]) {
+                    return c;
+                }
+            }
+        }
+        return ' ';
+    }
+    private static char diagonalWinner (char[][] thisBoard) {
+        char c = thisBoard[0][0];
+        if (c != ' ') {
+            if (c == thisBoard[1][1]) {
+                if (c == thisBoard[2][2]) {
+                    return c;
+                }
+            }
+        }
+        c = thisBoard[2][0];
+        if (c != ' ') {
+            if (c == thisBoard[1][1]) {
+                if (c == thisBoard[0][2]) {
                     return c;
                 }
             }
@@ -124,39 +161,7 @@ public class SmallBoard {
         return ' '; //nobody has won yet
     }
 
-    private static char columnWinner (char[][] thisBoard) {
-        for (int column = 0; column < 3; column++) {
-            char c = thisBoard[0][column];//Starting from the top char in the column
-            if (c == ' ') {
-                continue;
-            }
-            if (c == thisBoard[1][column]) {
-                if (c == thisBoard[2][column]) {
-                    return c;
-                }
-            }
-        }
-        return ' ';
-    }
-    private static char diagonalWinner (char[][] thisBoard) {
-        char c = thisBoard[0][0];
-        if (c != ' ') {
-            if (c == thisBoard[1][1]) {
-                if (c == thisBoard[2][2]) {
-                    return c;
-                }
-            }
-        }
-        c = thisBoard[2][0];
-        if (c != ' ') {
-            if (c == thisBoard[1][1]) {
-                if (c == thisBoard[0][2]) {
-                    return c;
-                }
-            }
-        }
-        return ' ';
-    }
+
     private boolean boardIsFull () {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
@@ -168,6 +173,7 @@ public class SmallBoard {
         return true;
     }
 
+    @Override
     public String toString() {
         String response = "";
         for (String s : this.toStringArray()) {

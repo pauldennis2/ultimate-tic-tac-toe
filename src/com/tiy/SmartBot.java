@@ -27,11 +27,17 @@ public class SmartBot extends Player {
     private int smartness;
     private char opponentToken;
 
+    private BigBoard bigBoard;
 
-    public SmartBot (char token, int smartness, char opponentToken) {
+
+    public SmartBot (char token, int smartness, char opponentToken, BigBoard bigBoard) {
         super(SMART_BOT_NAMES[new Random().nextInt(6)] + "Bot", token, "smartbot");
         this.smartness = smartness;
         this.opponentToken = opponentToken;
+        this.bigBoard = bigBoard;
+        if (bigBoard == null) {
+            throw new AssertionError("SmartBot cannot be instantiated without an active BigBoard");
+        }
     }
 
     public int getMove (SmallBoard smallBoard) {
@@ -43,11 +49,9 @@ public class SmartBot extends Player {
     }
 
     private int findBestMove (BigBoard bigBoard, int depth) {
-
         return 0;
     }
 
-    //@// TODO: 12/12/2016 Fix to make sure this is not being influenced by opponent winning moves in boards already won 
     public int evaluateBoard (BigBoard bigBoard) {
         int score = 0;
         SmallBoard statusBoard = bigBoard.getStatusBoard();
@@ -132,7 +136,6 @@ public class SmartBot extends Player {
         } else if (statusBoard.get(1, 1) == opponentToken) {
             score -= CONTROL_MIDDLE_BOARD;
         }
-        //Corner boards: 0,0 0,2 2,0 2,2
 
         for (SmallBoard smallBoard : bigBoard.getCornerBoards()) {
             if (smallBoard.getStatusToken() == this.getToken()) {
@@ -148,44 +151,6 @@ public class SmartBot extends Player {
                 score -= CONTROL_EDGE_BOARD;
             }
         }
-        /*
-        for (int row = 0; row <= 2; row += 2) {
-            for (int col = 0; col <= 2; col += 2) {
-                char statusBoardToken = statusBoard.get(row, col);
-                if (statusBoardToken == this.getToken()) {
-                    score += CONTROL_CORNER_BOARD;
-                } else if (statusBoardToken == opponentToken) {
-                    score -= CONTROL_CORNER_BOARD;
-                }
-            }
-        }
-        //Edge boards: 0,1 1,0 1,2 2,1
-        char statusBoardToken;
-        statusBoardToken = statusBoard.get(0, 1);
-        if (statusBoardToken == this.getToken()) {
-            score += CONTROL_EDGE_BOARD;
-        } else if (statusBoardToken == opponentToken) {
-            score -= CONTROL_EDGE_BOARD;
-        }
-        statusBoardToken = statusBoard.get(1, 0);
-        if (statusBoardToken == this.getToken()) {
-            score += CONTROL_EDGE_BOARD;
-        } else if (statusBoardToken == opponentToken) {
-            score -= CONTROL_EDGE_BOARD;
-        }
-        statusBoardToken = statusBoard.get(1, 2);
-        if (statusBoardToken == this.getToken()) {
-            score += CONTROL_EDGE_BOARD;
-        } else if (statusBoardToken == opponentToken) {
-            score -= CONTROL_EDGE_BOARD;
-        }
-        statusBoardToken = statusBoard.get(2, 1);
-        if (statusBoardToken == this.getToken()) {
-            score += CONTROL_EDGE_BOARD;
-        } else if (statusBoardToken == opponentToken) {
-            score -= CONTROL_EDGE_BOARD;
-        }*/
-
         return score;
     }
     //Winning means boards that we could win with one move
@@ -212,7 +177,24 @@ public class SmartBot extends Player {
                                 System.out.println("Error in SmartBot.getBoardType()");
                                 break;
                         }
-                    }//@// TODO: 12/12/2016 Write code for opponent. ideally pull the switch/case out of the ifs and
+                    }//@// TODO: 12/12/2016 clean this up
+                    if (tokenHasWinningMove(smallBoard, opponentToken) > 0) {
+                        int boardType = getBoardType(row, col);
+                        switch (boardType) {
+                            case 0://middle
+                                score -= WINNING_MIDDLE_BOARD;
+                                break;
+                            case 1://Edge
+                                score -= WINNING_EDGE_BOARD;
+                                break;
+                            case 2://Corner
+                                score -= WINNING_CORNER_BOARD;
+                                break;
+                            default:
+                                System.out.println("Error in SmartBot.getBoardType()");
+                                break;
+                        }
+                    }
                     // make it multiply by whether its opponent is winning or not
                 }
             }
@@ -229,7 +211,7 @@ public class SmartBot extends Player {
     */
     public static int tokenHasWinningMove (SmallBoard smallBoard, char token) {
         for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 3; column ++) {
+            for (int column = 0; column < 3; column++) {
                 if (tokenHasWinningMoveAt(row, column, smallBoard, token)) {
                     int response = row*3 + column + 1;
                     return response;
@@ -256,7 +238,7 @@ public class SmartBot extends Player {
         }
         SmallBoard theoreticalSmallBoard = new SmallBoard(theoreticalBoard);
 
-        if (smallBoard.getStatusToken() == token) {
+        if (theoreticalSmallBoard.getStatusToken() == token) {
             return true;
         } else {
             return false;

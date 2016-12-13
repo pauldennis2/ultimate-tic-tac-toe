@@ -67,6 +67,7 @@ public class HumanPlayer extends Player {
         String response = null;
         int row = 0;
         int col = 0;
+        char statusTokenOfDesiredBoard;
         do {
             try {
                 response = moveInputScanner.nextLine();
@@ -90,7 +91,9 @@ public class HumanPlayer extends Player {
                     this.printGameHelpInfo();
                 }
             }
-        } while (bigBoard.get(row, col).getStatusToken() == 'T'); //if the board selected is full, send them back
+            statusTokenOfDesiredBoard = bigBoard.get(row, col).getStatusToken();
+        } while (statusTokenOfDesiredBoard == 'T' || statusTokenOfDesiredBoard == 'W'); //if the board selected is full, send them back
+
         int answer = row*3 + col + 1;
         return answer;
     }
