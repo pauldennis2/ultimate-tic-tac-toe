@@ -5,7 +5,6 @@ package com.tiy;
  */
 public class SmallBoard {
 
-    boolean boardIsFull;
     char statusToken = ' '; //Possibilities: ' ', 'X', 'O' (or custom tokens). 'W' or 'T' possible for status boards
     char[][] board = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
@@ -116,6 +115,8 @@ public class SmallBoard {
         }
         return ' ';
     }
+
+    //@TODO this needs fixing. Wildcards aren't working. not sure why
 
     //Does this method care about the order of the tokens? I don't think so, need to make sure
     //Also note that this method should only ever be called from a status board.

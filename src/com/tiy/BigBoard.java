@@ -12,7 +12,10 @@ public class BigBoard {
 
     private boolean tiedSquareCountsForBoth;
 
+    private MoveLocation mostRecentMove;
+
     public BigBoard () {
+        mostRecentMove = null;
         tiedSquareCountsForBoth = true;
         statusBoard = new SmallBoard();
         boardArray = new SmallBoard[3][3];
@@ -21,6 +24,10 @@ public class BigBoard {
                 boardArray[row][col] = new SmallBoard();
             }
         }
+    }
+    //Can be null!
+    public MoveLocation getMostRecentMove () {
+        return mostRecentMove;
     }
 
     public SmallBoard getStatusBoard () {
@@ -108,6 +115,8 @@ public class BigBoard {
 
     public boolean placeToken (int bigRow, int bigCol, int smallRow, int smallCol, char token) {
         if (boardArray[bigRow][bigCol].placeToken(smallRow, smallCol, token)) { //Attempts to place the token in the corresponding SmallBoard
+            mostRecentMove = new MoveLocation(bigRow, bigCol, smallRow, smallCol);
+            this.statusUpdate();
             return true;
         }
         return false;

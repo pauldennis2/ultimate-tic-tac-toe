@@ -44,6 +44,7 @@ public class HumanPlayer extends Player {
                     System.out.println("Can't move there - already taken.");
                 }
             } catch (NumberFormatException ex) {
+
                 if (response.equals("exit")) {
                     return -1;
                 } else if (response.equals("rules")){

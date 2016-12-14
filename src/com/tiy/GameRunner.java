@@ -185,7 +185,8 @@ public class GameRunner {
     }
 
     public void testSmartBotEvaluation () {
-        SmartBot smarty = new SmartBot('O', 0,'X', bigBoard);
+        BigBoard big = new BigBoard();
+        SmartBot smarty = new SmartBot('O', 0,'X', big);
         System.out.println(smarty.getName() + " (O) will evaluate random boards.");
         for (int i = 0; i < 4; i++) {
             BigBoard bigBoard = GameRunner.createRandomBoard(85);

@@ -1,5 +1,6 @@
 package com.tiy;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -49,6 +50,16 @@ public class SmartBot extends Player {
     }
 
     private int findBestMove (BigBoard bigBoard, int depth) {
+        ArrayList<BigBoard> possibleMoves = bigBoard.getPossibleMoves(0, this.getToken());
+        for (BigBoard possibleBigBoard : possibleMoves) {
+            possibleBigBoard.statusUpdate();
+            int score = this.evaluateBoard(possibleBigBoard);
+            if (score < - 1000) { //If the board is a loss throw it out
+                possibleMoves.remove(possibleBigBoard);
+            }
+            if (score > 1000) {} //do something if the board is a winner?
+
+        }
         return 0;
     }
 
@@ -87,7 +98,7 @@ public class SmartBot extends Player {
         return score;
     }
 
-    private int evaluateStatusBoard (BigBoard bigBoard) {
+    public int evaluateStatusBoard (BigBoard bigBoard) {
         //Check to see if anyone has a winning move on the statusBoard.
         // If so, check further to see if they have a winning move in the specific smallBoard they would need to win
         //If opponent has a winning move in the smallBoard we need to win, take the points away
@@ -127,13 +138,19 @@ public class SmartBot extends Player {
         return statusBoardScore;
     }
     //Control means boards we have won
-    private int evaluateBoardControl (BigBoard bigBoard) {
+    public int evaluateBoardControl (BigBoard bigBoard) {
         int score = 0;
         SmallBoard statusBoard = bigBoard.getStatusBoard();
 
-        if (statusBoard.get(1, 1) == this.getToken()) {
+        /*if (statusBoard.get(1, 1) == this.getToken()) {
             score += CONTROL_MIDDLE_BOARD;
         } else if (statusBoard.get(1, 1) == opponentToken) {
+            score -= CONTROL_MIDDLE_BOARD;
+        }*/
+        char middleBoardStatusToken = bigBoard.get(1, 1).getStatusToken();
+        if (middleBoardStatusToken == this.getToken()) {
+            score += CONTROL_MIDDLE_BOARD;
+        } else if (middleBoardStatusToken == opponentToken) {
             score -= CONTROL_MIDDLE_BOARD;
         }
 
@@ -154,7 +171,7 @@ public class SmartBot extends Player {
         return score;
     }
     //Winning means boards that we could win with one move
-    private int evaluateBoardWinning (BigBoard bigBoard) {
+    public int evaluateBoardWinning (BigBoard bigBoard) {
         int score = 0;
         SmallBoard statusBoard = bigBoard.getStatusBoard();
         for (int row = 0; row < 3; row++) {
