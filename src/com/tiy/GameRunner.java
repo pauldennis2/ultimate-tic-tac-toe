@@ -15,8 +15,9 @@ public class GameRunner {
     int numHumPlayers;
 
     public static void main(String[] args) {
-        new GameRunner().testSmartBotEvaluation();
+        //new GameRunner().testSmartBotEvaluation();
         //new GameRunner().playGame();
+        new GameRunner().aiTest();
     }
 
     public GameRunner() {
@@ -200,6 +201,67 @@ public class GameRunner {
             System.out.println("X has winning move at :" + SmartBot.tokenHasWinningMove(smallBoard, 'X') + " (-1 if no winning move)");
             System.out.println("O has winning move at :" + SmartBot.tokenHasWinningMove(smallBoard, 'O') + " (-1 if no winning move)");
         }*/
+    }
+
+    public void aiTest() {
+        System.out.println("Starting a game with 2 AI players.");
+        bigBoard = new BigBoard();
+        player1 = new DumbBot('X');
+        player2 = new SmartBot('O', 0, 'X', bigBoard);
+        System.out.println("Player 1: " + player1.getName() + " (" + player1.getToken() + ")");
+        System.out.println("Player 2: " + player2.getName() + " (" + player2.getToken() + ")");
+        boolean playing = true;
+        int currentSmallBoardNum = 0;
+        while (playing) {
+            //For simplicity we'll just run two turns per loop, so we always know whether we're smart or dumb
+            //Later we make this prettier with the activePlayer / nonActivePlayer structure
+            System.out.println(player1.getName() + "'s turn.");
+            if (currentSmallBoardNum == 0) {//can move anywhere
+                currentSmallBoardNum = player1.getMove(bigBoard);
+            }
+            //currentSmallBoardNum should be between 1 and 9
+            int row = (currentSmallBoardNum - 1) / 3;
+            int col = (currentSmallBoardNum - 1) % 3;
+
+            SmallBoard activeSmallBoard = bigBoard.get(row, col);
+            int smallBoardMoveLoc = player1.getMove(activeSmallBoard);
+            int smallRow = (smallBoardMoveLoc - 1) / 3;
+            int smallCol = (smallBoardMoveLoc - 1) % 3;
+
+            bigBoard.placeToken(row, col, smallRow, smallCol, player1.getToken());
+
+
+            switch (bigBoard.statusUpdate()) {
+                case -1:
+                    System.out.println("Game is tied.");
+                    playing = false;
+                    break;
+                case 0:
+                    //logic to determine next small board
+                    currentSmallBoardNum = smallBoardMoveLoc;
+                    if (bigBoard.get(smallRow, smallCol).getStatusToken() != ' ') {//if the board is won or tied
+                        currentSmallBoardNum = 0; //This means they can pick anywhere
+                    }
+                    break;
+                case 1:
+                    System.out.println(player1.getName() + " wins!");
+                    System.out.println(bigBoard);
+                    playing = false;
+                    break;
+            } //End switch(bigBoard.statusUpdate())
+
+            //Player 2's turn
+            if (currentSmallBoardNum == 0) {
+                //This is a harder case, we'll tackle this second
+                Node<BigBoard> root = new Node<BigBoard>(null, bigBoard);
+                //root.setChildren(bigBoard.getPossibleMoves());
+            }
+            //Current board selected
+            Node<BigBoard> root = new Node<BigBoard>(null, bigBoard);
+            //root.setChildren(bigBoard.getPossibleMoves(currentSmallBoardNum, player2.getToken()));
+            root.setChildren(bigBoard.getPossibleMoves(player2.getToken()));
+
+        }//End main game loop
     }
 
     public static SmallBoard createRandomSmallBoard (int numTokens) {

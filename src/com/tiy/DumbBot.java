@@ -8,10 +8,10 @@ import java.util.Random;
 public class DumbBot extends Player {
     Random random;
 
-    public static final String[] BOT_NAMES = {"Tim", "Sal", "Jon", "Sue", "Fred", "Bob"};
+    public static final String[] BOT_NAMES = {"Tim", "Sal", "Jon", "Sue", "Tom", "Bob"};
 
     public DumbBot (char token) {
-        super(BOT_NAMES[new Random().nextInt(6)] + "Bot", token, "dumbbot");
+        super(BOT_NAMES[new Random().nextInt(6)] + "Bot", token, PlayerType.DUMBBOT);
         random = new Random();
     }
 

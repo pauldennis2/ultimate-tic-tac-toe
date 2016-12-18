@@ -29,8 +29,11 @@ public class Node<T> {
         }
     }
 
-    public int getMinOfChildrensMax () {
+    public int getMinOfChildrensMax () throws NoChildrenException {
         int bestScore = Integer.MAX_VALUE;
+        if (children.size() == 0) {
+            throw new NoChildrenException();
+        }
         for (Node child : children) {
             if (child.getMaxChildrenScore() < bestScore) {
                 bestScore = child.getMaxChildrenScore();
@@ -40,8 +43,11 @@ public class Node<T> {
         return maxChildrenScore;
     }
 
-    public int getMaxOfChildrensMin () {
+    public int getMaxOfChildrensMin () throws NoChildrenException {
         int bestScore = Integer.MIN_VALUE;
+        if (children.size() == 0) {
+            throw new NoChildrenException();
+        }
         for (Node child : children) {
             if (child.getMinChildrenScore() > bestScore) {
                 bestScore = child.getMinChildrenScore();
@@ -72,7 +78,7 @@ public class Node<T> {
         this.score = score;
     }
 
-    public int getMaxChildrenScore () {
+    public int getMaxChildrenScore () throws NoChildrenException {
         int bestScore = Integer.MIN_VALUE;
         for (Node node : children) {
             if (node.getScore() > bestScore) {
@@ -83,7 +89,7 @@ public class Node<T> {
         return maxChildrenScore;
     }
 
-    public int getMinChildrenScore () {
+    public int getMinChildrenScore () throws NoChildrenException {
         int bestScore = Integer.MAX_VALUE;
         if (children != null) {
             for (Node node : children) {

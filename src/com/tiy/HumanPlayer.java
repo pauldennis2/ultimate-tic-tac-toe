@@ -16,7 +16,7 @@ public class HumanPlayer extends Player {
     private static boolean rulesDisplayed = true;//Yes this really is static
 
     public HumanPlayer (String name, char token) {
-        super(name, token, "human");
+        super(name, token, PlayerType.HUMAN);
         scanner = new SafeScanner(System.in);
         moveInputScanner = new Scanner(System.in);
     }

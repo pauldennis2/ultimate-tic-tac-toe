@@ -32,7 +32,7 @@ public class SmartBot extends Player {
 
 
     public SmartBot (char token, int smartness, char opponentToken, BigBoard bigBoard) {
-        super(SMART_BOT_NAMES[new Random().nextInt(6)] + "Bot", token, "smartbot");
+        super(SMART_BOT_NAMES[new Random().nextInt(6)] + "Bot", token, PlayerType.SMARTBOT);
         this.smartness = smartness;
         this.opponentToken = opponentToken;
         this.bigBoard = bigBoard;
@@ -42,25 +42,22 @@ public class SmartBot extends Player {
     }
 
     public int getMove (SmallBoard smallBoard) {
-        return 0;
+        //return findBestMove(bigBoard, smartness);
+        return -5;
     }
 
     public int getMove (BigBoard bigBoard) {
-        return findBestMove (bigBoard, smartness);
+        //return findBestMove (bigBoard, smartness);
+        return -5;
     }
 
-    private int findBestMove (BigBoard bigBoard, int depth) {
-        ArrayList<BigBoard> possibleMoves = bigBoard.getPossibleMoves(0, this.getToken());
-        for (BigBoard possibleBigBoard : possibleMoves) {
-            possibleBigBoard.statusUpdate();
-            int score = this.evaluateBoard(possibleBigBoard);
-            if (score < - 1000) { //If the board is a loss throw it out
-                possibleMoves.remove(possibleBigBoard);
-            }
-            if (score > 1000) {} //do something if the board is a winner?
-
+    private MoveLocation findBestMove (BigBoard bigBoard, int depth) {
+        Node<BigBoard> root = new Node<BigBoard>(null, bigBoard);
+        root.setChildren(bigBoard.getPossibleMoves(this.getToken()));
+        for (Node<BigBoard> child : root.getChildren()) {
+            child.setChildren(child.getMe().getPossibleMoves(opponentToken));
         }
-        return 0;
+        return null;
     }
 
     public int evaluateBoard (BigBoard bigBoard) {

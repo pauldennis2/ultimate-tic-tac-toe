@@ -16,7 +16,7 @@ public class BigBoard {
 
     public BigBoard () {
         mostRecentMove = null;
-        tiedSquareCountsForBoth = true;
+        tiedSquareCountsForBoth = false;
         statusBoard = new SmallBoard();
         boardArray = new SmallBoard[3][3];
         for (int row = 0; row < 3; row++) {
@@ -28,6 +28,28 @@ public class BigBoard {
     //Can be null!
     public MoveLocation getMostRecentMove () {
         return mostRecentMove;
+    }
+
+    public int getCurrentBoardNum () {
+        if (mostRecentMove == null) {
+            return 0; //If there have not been any moves, the board is "open" (0)
+        }
+        int row = mostRecentMove.getSmallRow();
+        int col = mostRecentMove.getSmallCol();
+        //If the most recent square moved in corresponds to a won or full board, they can move anywhere
+        //i.e. zero. Otherwise, give them the 1-9 board number
+        if (boardArray[row][col].getStatusToken() != ' ') {
+            return 0;
+        } else {
+            return (row*3 + col + 1);
+        }
+    }
+
+
+    public void setMostRecentMove (MoveLocation loc) {
+        System.out.println("Warning from bigBoard.setMostRecentMove():");
+        System.out.println("You shouldn't be using this except for testing.");
+        mostRecentMove = loc;
     }
 
     public SmallBoard getStatusBoard () {
@@ -149,11 +171,11 @@ public class BigBoard {
 
     /**
      *
-     * @param currentSmallBoardNum - the current small board we have to play on. 0 if open
      * @param token - the token to place
      * @return an ArrayList<BigBoard> of possibilities of what the board will look like after the move
      */
-    public ArrayList<BigBoard> getPossibleMoves (int currentSmallBoardNum, char token) {
+    public ArrayList<BigBoard> getPossibleMoves (char token) {
+        int currentSmallBoardNum = this.getCurrentBoardNum();
         ArrayList<BigBoard> possibleMoves = new ArrayList<BigBoard>();
         if (currentSmallBoardNum == 0) {
             //can move anywhere; more complicated
@@ -208,6 +230,7 @@ public class BigBoard {
     //Clears entire board! Use with caution.
     public void clear () {
         System.out.println("Board cleared.");
+        mostRecentMove = null;
         for (SmallBoard[] boardRow : boardArray) {
             for (SmallBoard smallBoard : boardRow) {
                 smallBoard.clear();

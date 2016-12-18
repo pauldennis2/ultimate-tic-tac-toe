@@ -9,9 +9,9 @@ public abstract class Player {
     //Don't hate the Player, hate its methods!
     private String name;
     private char token;
-    private String type;
+    private PlayerType type;
 
-    public Player (String name, char token, String type) {
+    public Player (String name, char token, PlayerType type) {
         this.name = name;
         this.token = token;
         this.type = type;
@@ -31,5 +31,5 @@ public abstract class Player {
     public String getName() {
         return name;
     }
-    public String getType() { return type; }
+    public PlayerType getType() { return type; }
 }

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -31,6 +32,12 @@ public class TreeTester {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void testTreePruning() {
+        // TODO write
+        assertTrue(false);
     }
 
     @Test
@@ -84,10 +91,13 @@ public class TreeTester {
     @Test
     public void testBasicBigBoardTree () throws Exception {
         Node<BigBoard> root = new Node<BigBoard>(null, new BigBoard());
-        ArrayList<BigBoard> possibles = root.getMe().getPossibleMoves(1, 'O');//Should be 9 possibles
+        root.getMe().placeToken(0, 0, 1, 1, 'X');
+        ArrayList<BigBoard> possibles = root.getMe().getPossibleMoves('O');//Should be 9 possibles
         root.setChildren(possibles);
         assertEquals(9, root.getNumberOfChildren());
-        ArrayList<BigBoard> morePossibilities = root.getMe().getPossibleMoves(0, 'O');//Should be 81 here
+
+        root.getMe().clear();
+        ArrayList<BigBoard> morePossibilities = root.getMe().getPossibleMoves('O');//Should be 81 here
         root.setChildren(morePossibilities);
         assertEquals(81, root.getNumberOfChildren());
     }
@@ -95,13 +105,14 @@ public class TreeTester {
     @Test
     public void testBasicBBTreeDecreasingNumberOfMoves () throws Exception {
         Node<BigBoard> root = new Node<BigBoard>(null, new BigBoard());
-        ArrayList<BigBoard> possibles = root.getMe().getPossibleMoves(1, 'O');
+        root.getMe().placeToken(0,0,1,1, 'O');
+        ArrayList<BigBoard> possibles = root.getMe().getPossibleMoves('O');
         root.setChildren(possibles);
         assertEquals(9, root.getNumberOfChildren());
 
         Node<BigBoard> firstChild = root.getChildren().get(0);
 
-        ArrayList<BigBoard> secondOrderPossibles = firstChild.getMe().getPossibleMoves(1, 'X');
+        ArrayList<BigBoard> secondOrderPossibles = firstChild.getMe().getPossibleMoves('X');
         firstChild.setChildren(secondOrderPossibles);
         assertEquals(8, firstChild.getNumberOfChildren());//We're in the same board with one move taken
         assertEquals(9, root.getNumberOfChildren());//Root should still have 9 children
@@ -135,7 +146,7 @@ public class TreeTester {
         root.getChildren().get(1).setChildren(secondIntList);
         root.getChildren().get(2).setChildren(thirdIntList);
 
-        printTree(root);
+        //printTree(root);
 
         setScoreEqualValue(root);
         //int scoreOf2ndChilds2ndChild = root.getChildren().get(1).getChildren().get(1);
@@ -155,12 +166,94 @@ public class TreeTester {
 
         root.discardChild(root.getChildren().get(2));
         secondChild.discardChild(secondChild.getChildren().get(0));
-        printTree(root);
+        //printTree(root);
 
         maximin = root.getMaxOfChildrensMin();
         assertEquals(8, maximin);
         minimax = root.getMinOfChildrensMax();
         assertEquals(7, minimax);
+    }
+
+    @Test
+    public void testMoveTree () throws Exception {
+        BigBoard bigBoard = buildTestingBoard();
+        Node<BigBoard> root = new Node<>(null, bigBoard);
+        //We've created a board with X to play in board 1
+        //First we will try statically setting the next move square
+        root.setChildren(bigBoard.getPossibleMoves('X'));
+        assertEquals(4, root.getNumberOfChildren());
+        //Now we'll do it more dynamically
+        int previousRow = bigBoard.getMostRecentMove().getSmallRow();
+        int previousCol = bigBoard.getMostRecentMove().getSmallCol();
+        int nextBoard = previousRow*3 + previousCol + 1;
+        assertEquals(1, nextBoard);
+        root.setChildren(bigBoard.getPossibleMoves('X'));
+        int totalGrandChildren = 0;
+        for (Node<BigBoard> child : root.getChildren()) {
+            BigBoard board = child.getMe();
+            child.setChildren(board.getPossibleMoves('O'));
+            totalGrandChildren += child.getNumberOfChildren();
+        }
+        assertEquals(4, root.getNumberOfChildren());
+        //Children:
+        //Root: 4
+        //1st Child: 7
+        //2nd Child: 9
+        //3rd Child: 9
+        //4th child: 67
+        assertEquals(7+9+9+67, totalGrandChildren);
+        SmartBot analyst = new SmartBot('O', 0, 'X', root.getMe());
+        root.setScore(analyst.evaluateBoard(root.getMe()));
+        assertEquals (85, root.getScore());
+
+
+
+        //Score all the grandchildren boards
+        for (Node<BigBoard> child : root.getChildren()) {
+            //While we're at it score the children
+            BigBoard childBoard = child.getMe();
+            int childScore = analyst.evaluateBoard(childBoard);
+            child.setScore(childScore);
+            for (Node<BigBoard> grandchild : child.getChildren()) {
+                BigBoard grandChildBoard = grandchild.getMe();
+                int score = analyst.evaluateBoard(grandChildBoard);
+                grandchild.setScore(score);
+                System.out.println("Score for this board = " + score);
+            }
+        }
+        //X's best move clearly is at spot 8 on board 1 or (0,0,2,1) in full coordinates
+        BigBoard optimalForX = root.getMe().copy();
+        optimalForX.placeToken(0,0,2,1, 'X');
+        int optimalXScore = analyst.evaluateBoard(optimalForX);
+        System.out.println("Root board score = " + analyst.evaluateBoard(bigBoard));
+        System.out.println("X's best move minimizes the score to " + optimalXScore);
+        assertEquals (optimalXScore, root.getMinChildrenScore());
+    }
+
+    public BigBoard buildTestingBoard () {
+        BigBoard bigBoard = new BigBoard();
+        bigBoard.placeToken(0,0,0,0, 'X');
+        bigBoard.placeToken(0,0,0,1, 'X');
+        bigBoard.placeToken(0,0,1,1, 'X');
+        bigBoard.placeToken(0,0,1,0, 'O');
+        bigBoard.placeToken(0,0,1,2, 'O');
+
+        bigBoard.placeToken(0,2,0,0, 'O');
+        bigBoard.placeToken(0,2,1,1, 'O');
+
+        bigBoard.placeToken(1,2,0,0, 'O');
+        bigBoard.placeToken(1,2,0,1, 'O');
+        bigBoard.placeToken(1,2,0,2, 'O');
+
+        bigBoard.placeToken(2,2,0,0, 'O');
+        bigBoard.placeToken(2,2,0,1, 'O');
+        bigBoard.placeToken(2,2,0,2, 'O');
+
+        bigBoard.setMostRecentMove(new MoveLocation(1, 1, 0, 0));
+        System.out.println("Active board to play on = " + bigBoard.getCurrentBoardNum());
+
+        System.out.println(bigBoard);
+        return bigBoard;
     }
 
     public void printTree (Node<Integer> root) {

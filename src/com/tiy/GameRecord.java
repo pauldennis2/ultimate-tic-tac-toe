@@ -9,8 +9,11 @@ public class GameRecord {
     String player1Name;
     String player2Name;
 
-    String player1Type;
-    String player2Type;
+    //String player1Type;
+    //String player2Type;
+
+    PlayerType player1Type;
+    PlayerType player2Type;
 
     ArrayList<MoveLocation> moves;
 
