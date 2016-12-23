@@ -1,5 +1,7 @@
 package com.tiy;
 
+import java.util.Random;
+
 /**
  * Created by erronius on 12/9/2016.
  */
@@ -192,5 +194,28 @@ public class SmallBoard {
         response [4] = board[2][0] + "|" + board[2][1] + "|" + board[2][2];
         return response;
     }
+
+    /**
+     *
+     * @param numTokens
+     * @return
+     */
+    public static SmallBoard createRandomSmallBoard (int numTokens) {
+        SmallBoard smallBoard = new SmallBoard();
+        Random random = new Random();
+        for (int i = 0; i < numTokens; i++) {
+            int row = random.nextInt(3);
+            int col = random.nextInt(3);
+            char token;
+            if (random.nextBoolean()) {
+                token = 'X';
+            } else {
+                token = 'O';
+            }
+            smallBoard.placeToken(row, col, token);
+        }
+        return smallBoard;
+    }
+
 
 }

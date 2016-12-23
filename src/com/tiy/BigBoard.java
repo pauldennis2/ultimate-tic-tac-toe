@@ -1,6 +1,7 @@
 package com.tiy;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by erronius on 12/9/2016.
@@ -236,5 +237,34 @@ public class BigBoard {
                 smallBoard.clear();
             }
         }
+    }
+
+    /**
+     * Returns a randomly generated Ultimate TTT board. The method will attempt to place tokens numTokens times, but
+     * any time it attempts to place a token on an already occupied square, it will simply skip. This means that the
+     * actual number of tokens on the returned board will be somewhere between 1 and numTokens, with an average of
+     * around 50-60% of numTokens. We leave the exact math on that as an exercise for the reader. Tokens will be
+     * a random distribution of X's and O's - no guarantee of parity.
+     * @param numTokens number of tokens to ATTEMPT to place
+     * @return          A BigBoard object with between 1 and numTokens tokens placed
+     */
+    public static BigBoard createRandomBoard (int numTokens) {
+        BigBoard bigBoard = new BigBoard();
+        Random random = new Random();
+        for (int i = 0; i < numTokens; i++) {
+            int bigRow = random.nextInt(3);
+            int bigCol = random.nextInt(3);
+            int smallRow = random.nextInt(3);
+            int smallCol = random.nextInt(3);
+            char token;
+            if (random.nextBoolean()) {
+                token = 'X';
+            } else {
+                token = 'O';
+            }
+            bigBoard.placeToken(bigRow, bigCol, smallRow, smallCol, token);
+        }
+        bigBoard.statusUpdate();
+        return bigBoard;
     }
 }

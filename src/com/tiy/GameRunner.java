@@ -16,8 +16,8 @@ public class GameRunner {
 
     public static void main(String[] args) {
         //new GameRunner().testSmartBotEvaluation();
-        //new GameRunner().playGame();
-        new GameRunner().aiTest();
+        new GameRunner().playGame();
+        //new GameRunner().aiTest();
     }
 
     public GameRunner() {
@@ -26,9 +26,7 @@ public class GameRunner {
 
 
     public void playGame () {
-        System.out.println("Welcome to (Ultimate) Tic Tac Toe.");
-        //System.out.println("Wimp out and play regular TTT?");
-        //boolean boring = scanner.nextYesNoAnswer();
+        System.out.println("Welcome to Ultimate Tic Tac Toe.");
         boolean boring = false;
 
         System.out.println("Input number of human players (0, 1, or 2):");
@@ -59,19 +57,7 @@ public class GameRunner {
         }
         //Reminder: 'W' and 'T' are not allowed as tokens. Any other characters should be OK if we want to go back
         //And allow the user to pick their token.
-        if (boring) {
-            playRegularTicTacToe();
-        } else {
-            playUltimateTicTacToe();
-        }
-    }
-
-    public void playRegularTicTacToe () {
-        System.out.println("Welcome to Regular Old Tic Tac Toe.");
-        System.out.println("Player 1: " + player1.getName() + " (" + player1.getToken() + ")");
-        System.out.println("Player 2: " + player2.getName() + " (" + player2.getToken() + ")");
-        smallBoard = new SmallBoard();
-        System.out.println(smallBoard);
+        playUltimateTicTacToe();
     }
 
     public void playUltimateTicTacToe () {
@@ -185,12 +171,13 @@ public class GameRunner {
         }
     }
 
+    //Written before introduction of unit tests
     public void testSmartBotEvaluation () {
         BigBoard big = new BigBoard();
         SmartBot smarty = new SmartBot('O', 0,'X', big);
         System.out.println(smarty.getName() + " (O) will evaluate random boards.");
         for (int i = 0; i < 4; i++) {
-            BigBoard bigBoard = GameRunner.createRandomBoard(85);
+            BigBoard bigBoard = BigBoard.createRandomBoard(85);
             System.out.println(bigBoard);
             System.out.println(smarty.getName() + "'s evaluation of this board:" + smarty.evaluateBoard(bigBoard));
         }
@@ -203,6 +190,7 @@ public class GameRunner {
         }*/
     }
 
+    //Written before introduction of unit tests
     public void aiTest() {
         System.out.println("Starting a game with 2 AI players.");
         bigBoard = new BigBoard();
@@ -264,40 +252,5 @@ public class GameRunner {
         }//End main game loop
     }
 
-    public static SmallBoard createRandomSmallBoard (int numTokens) {
-        SmallBoard smallBoard = new SmallBoard();
-        Random random = new Random();
-        for (int i = 0; i < numTokens; i++) {
-            int row = random.nextInt(3);
-            int col = random.nextInt(3);
-            char token;
-            if (random.nextBoolean()) {
-                token = 'X';
-            } else {
-                token = 'O';
-            }
-            smallBoard.placeToken(row, col, token);
-        }
-        return smallBoard;
-    }
 
-    public static BigBoard createRandomBoard (int numTokens) {
-        BigBoard bigBoard = new BigBoard();
-        Random random = new Random();
-        for (int i = 0; i < numTokens; i++) {
-            int bigRow = random.nextInt(3);
-            int bigCol = random.nextInt(3);
-            int smallRow = random.nextInt(3);
-            int smallCol = random.nextInt(3);
-            char token;
-            if (random.nextBoolean()) {
-                token = 'X';
-            } else {
-                token = 'O';
-            }
-            bigBoard.placeToken(bigRow, bigCol, smallRow, smallCol, token);
-        }
-        bigBoard.statusUpdate();
-        return bigBoard;
-    }
 }

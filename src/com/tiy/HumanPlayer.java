@@ -13,7 +13,7 @@ public class HumanPlayer extends Player {
 
     private int numTimesHelpTriggered;
 
-    private static boolean rulesDisplayed = true;//Yes this really is static
+    private static boolean rulesDisplayed = false;//Yes this really is static
 
     public HumanPlayer (String name, char token) {
         super(name, token, PlayerType.HUMAN);
