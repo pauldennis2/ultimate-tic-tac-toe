@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by erronius on 12/11/2016.
+ * Created by pauldennis on 12/11/2016.
  */
 public class SmartBot extends Player {
 
-    public static final String[] SMART_BOT_NAMES = {"Babbage", "Turing", "Hopper", "Torvalds", "Kahnuth", "Lovelace"};
+    public static final String[] SMART_BOT_NAMES = {"Babbage", "Turing", "Hopper", "Torvalds", "Knuth", "Lovelace"};
 
     public static final int WINNING_STATUS_BOARD = 25;
     public static final int GAME_WINNING_MOVE = 50;
@@ -30,7 +30,13 @@ public class SmartBot extends Player {
 
     private BigBoard bigBoard;
 
-
+    /**
+     *
+     * @param token the AI's token
+     * @param smartness Not used yet. Meant to represent the depth of the search in turns.
+     * @param opponentToken opponent's token, so we can evaluate boards
+     * @param bigBoard a reference to the BigBoard the AI is on, so it can always see the whole picture
+     */
     public SmartBot (char token, int smartness, char opponentToken, BigBoard bigBoard) {
         super(SMART_BOT_NAMES[new Random().nextInt(6)] + "Bot", token, PlayerType.SMARTBOT);
         this.smartness = smartness;
@@ -41,16 +47,33 @@ public class SmartBot extends Player {
         }
     }
 
+    /**
+     * Not yet implemented. Required to extend abstract class Player
+     * @param smallBoard the SmallBoard in which the AI must move
+     * @return the location of the move in the given SmallBoard
+     */
     public int getMove (SmallBoard smallBoard) {
         //return findBestMove(bigBoard, smartness);
         return -5;
     }
 
+    /**
+     * Not yet implemented. Required to extend abstract class Player
+     * @param bigBoard the BigBoard to move in. Redundant in SmartBot since we already have a reference.
+     * @return the SmallBoard to move in
+     */
     public int getMove (BigBoard bigBoard) {
         //return findBestMove (bigBoard, smartness);
         return -5;
     }
 
+    /**
+     * Not yet fully implemented. Helper method to getMove, containing the actual logic. Probably will run recursively
+     * until depth is 0.
+     * @param bigBoard the BigBoard to find the best move in
+     * @param depth remaining depth to search (in turns)
+     * @return MoveLocation of our best move in the given BigBoard
+     */
     private MoveLocation findBestMove (BigBoard bigBoard, int depth) {
         Node<BigBoard> root = new Node<BigBoard>(null, bigBoard);
         root.setChildren(bigBoard.getPossibleMoves(this.getToken()));
@@ -60,6 +83,18 @@ public class SmartBot extends Player {
         return null;
     }
 
+    /**
+     * The heuristic algorithm that evaluates the board. Rules:
+     * <ul>
+     * <li>This algorithm is symmetric - we are playing a zero-sum game, so what's good for our opponent is bad for us
+     * and vice-versa.</li>
+     * <li>This algorithm does not attempt to evaluate future moves, except to the extent of evaluating possible
+     * winning moves. That's the job of the Node/Tree structure and findBestMove()</li>
+     * </ul>
+     * @param bigBoard the board to evaluate.
+     * @return The score associated with this board. A positive score indicates an edge for the AI doing the evaluating,
+     * a negative score is an edge for the opponent (who could also be an AI - doesn't matter).
+     */
     public int evaluateBoard (BigBoard bigBoard) {
         int score = 0;
         SmallBoard statusBoard = bigBoard.getStatusBoard();

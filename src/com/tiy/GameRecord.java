@@ -3,14 +3,14 @@ package com.tiy;
 import java.util.ArrayList;
 
 /**
- * Created by erronius on 12/9/2016.
+ * Created by pauldennis on 12/9/2016.
+ *
+ * This class serves as a record of a game. Needs implementation of writeToFile()
  */
 public class GameRecord {
+
     String player1Name;
     String player2Name;
-
-    //String player1Type;
-    //String player2Type;
 
     PlayerType player1Type;
     PlayerType player2Type;
@@ -28,14 +28,30 @@ public class GameRecord {
         moves = new ArrayList<MoveLocation>();
     }
 
+    /**
+     * Adds the given move to the record
+     *
+     * @param bigRow row of the SmallBoard
+     * @param bigCol column of the SmallBoard
+     * @param smallRow row of the square within the given SmallBoard
+     * @param smallCol column of the square within the given SmallBoard
+     */
     public void addTurn (int bigRow, int bigCol, int smallRow, int smallCol) {
         moves.add(new MoveLocation(bigRow, bigCol, smallRow, smallCol));
     }
 
+    /**
+     *
+     * @param result the result of the game overall (win, loss, tie)
+     */
     public void addResult(String result) {
         this.result = result;
     }
 
+    /**
+     * Write the record to fie
+     * TODO implement
+     */
     public void writeToFile () {
         System.out.println("Writing to file");
     }

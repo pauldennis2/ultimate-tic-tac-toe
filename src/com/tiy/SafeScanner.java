@@ -8,6 +8,11 @@ import java.util.Scanner;
 import java.io.InputStream;
 import java.util.InputMismatchException;
 
+/**
+ * SafeScanner is a java.util.Scanner wrapper class that aims to sanitize user input so as to avoid the implementer
+ * having to constantly try/catch bad input. The class has gone through some changes and this is not the latest version
+ * so I will not be adding documentation here.
+ */
 public class SafeScanner {
 
     private Scanner scanner;

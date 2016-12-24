@@ -2,6 +2,10 @@ package com.tiy;
 
 import java.util.Random;
 
+/**
+ * Runner class for the Ultimate Tic Tac Toe Game.
+ * Created by pauldennis around 12/9/16
+ */
 public class GameRunner {
 
     SafeScanner scanner;
@@ -15,16 +19,19 @@ public class GameRunner {
     int numHumPlayers;
 
     public static void main(String[] args) {
-        //new GameRunner().testSmartBotEvaluation();
-        new GameRunner().playGame();
-        //new GameRunner().aiTest();
+        GameRunner runner = new GameRunner();
+        //runner.testSmartBotEvaluation();
+        runner.playGame();
+        //runner.aiTest();
     }
 
     public GameRunner() {
         scanner = new SafeScanner(System.in);
     }
 
-
+    /**
+     * This method initializes the Player objects and passes off to playUltimateTicTacToe().
+     */
     public void playGame () {
         System.out.println("Welcome to Ultimate Tic Tac Toe.");
         boolean boring = false;
@@ -60,6 +67,9 @@ public class GameRunner {
         playUltimateTicTacToe();
     }
 
+    /**
+     * This is the main game method, including the main game loop.
+     */
     public void playUltimateTicTacToe () {
         System.out.println("Welcome to ULTIMATE Tic Tac Toe.");
         System.out.println("You've made a much more interesting choice.");
@@ -137,7 +147,12 @@ public class GameRunner {
         }//End main game loop
     }
 
-    public void testWildCardThingee () {
+    /**
+     * Written before we discussed unit tests, this is a way to see if the computer can correctly detect wildcard wins.
+     * Does not quite work yet. The method prints out some random boards and allows the tester to see if the
+     * getStatusTokenWithWildcards method returns the correct value (as interpreted by the human tester).
+     */
+    public void testWildCardDetection () {
         System.out.println("Testing wildcard detection levels with 6 random examples");
         Random random = new Random();
         SmallBoard[] boards = new SmallBoard[6];
@@ -171,7 +186,11 @@ public class GameRunner {
         }
     }
 
-    //Written before introduction of unit tests
+    /**
+     * As testWildCardDetection(), written before we discussed unit tests. The method prints out random BigBoards and/or
+     * SmallBoards with what the AI thinks the score of that board should be. This allows a human tester to compare
+     * these values with what they would expect the value to be, based on knowledge of the heuristic.
+     */
     public void testSmartBotEvaluation () {
         BigBoard big = new BigBoard();
         SmartBot smarty = new SmartBot('O', 0,'X', big);
@@ -190,7 +209,10 @@ public class GameRunner {
         }*/
     }
 
-    //Written before introduction of unit tests
+    /**
+     * This method is equivalent to the playGame -> playUltimateTicTacToe. It starts a game between two AI players.
+     * This is a testing/sandbox method that is not part of the main program structure. Work in progress.
+     */
     public void aiTest() {
         System.out.println("Starting a game with 2 AI players.");
         bigBoard = new BigBoard();

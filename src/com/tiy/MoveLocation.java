@@ -1,7 +1,10 @@
 package com.tiy;
 
 /**
- * Created by erronius on 12/10/2016.
+ * Created by pauldennis on 12/10/2016.
+ *
+ * This is a POJO/Bean to keep track of the location of moves, both for keeping track of where the last move was and for
+ * the GameRecord class.
  */
 public class MoveLocation {
 
@@ -47,6 +50,5 @@ public class MoveLocation {
         this.bigCol = bigCol;
         this.smallRow = smallRow;
         this.smallCol = smallCol;
-
     }
 }

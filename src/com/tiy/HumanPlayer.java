@@ -3,48 +3,63 @@ package com.tiy;
 import java.util.Scanner;
 
 /**
- * Created by erronius on 12/9/2016.
+ * Created by pauldennis on 12/9/2016.
+ *
+ * This class represents a Human Player of the game. The getMove() methods will require user input.
  */
 public class HumanPlayer extends Player {
 
     SafeScanner scanner;
-
     Scanner moveInputScanner; //we need a non-sanitized scanner to handle user input so that we can properly exit and etc
 
-    private int numTimesHelpTriggered;
+    private static boolean rulesDisplayed = false; //This is static because it will be for both players.
 
-    private static boolean rulesDisplayed = false;//Yes this really is static
-
+    /**
+     * Constructor for the HumanPlayer
+     * @param name Player's name
+     * @param token Player's token (letter they place on the board0
+     */
     public HumanPlayer (String name, char token) {
         super(name, token, PlayerType.HUMAN);
         scanner = new SafeScanner(System.in);
         moveInputScanner = new Scanner(System.in);
     }
 
+    /**
+     * This method gets the user's move. The user can enter "exit" or "rules", and any other non-number input will
+     * result in the help info being printed.
+     *
+     * @param smallBoard the SmallBoard the user can move in
+     * @return the legal move of the user's choice
+     */
+    @Override
     public int getMove (SmallBoard smallBoard) {
         System.out.println(smallBoard);
         System.out.println("Please enter square number, or keyword (rules, help, exit)");
         String response = null;
         int row = 0;
         int col = 0;
+        boolean moveOutOfRange = false;
         do {
             try {
                 response = moveInputScanner.nextLine();
                 int userMove = Integer.parseInt(response);
                 if (userMove > 9 || userMove < 1) {
-                    System.out.println("Great. You broke it.");
-                    assert(false);
+                    System.out.println("Your move must be between 1 and 9.");
+                    moveOutOfRange = true;
+                    continue;
+                } else {
+                    moveOutOfRange = false;
                 }
                 userMove--; //computerized to 0-8;
 
                 //Check with the board to make sure it's not full.
-                row = userMove/3;
-                col = userMove%3;
+                row = userMove / 3;
+                col = userMove % 3;
                 if (smallBoard.get(row, col) != ' ') {
                     System.out.println("Can't move there - already taken.");
                 }
             } catch (NumberFormatException ex) {
-
                 if (response.equals("exit")) {
                     return -1;
                 } else if (response.equals("rules")){
@@ -53,11 +68,19 @@ public class HumanPlayer extends Player {
                     this.printGameHelpInfo();
                 }
             }
-        } while (smallBoard.get(row, col) != ' ');
-        int answer = row*3 + col + 1;
+        } while (smallBoard.get(row, col) != ' ' || moveOutOfRange);
+        int answer = row * 3 + col + 1;
         return answer;
     }
 
+    /**
+     * This method gets the BigBoard the user wants to move in. As above, user can enter "exit" or "rules" and other
+     * inputs result in the help info being displayed.
+     *
+     * @param bigBoard the BigBoard the user can move in
+     * @return the legal SmallBoard of the user's choice (any non-full board)
+     */
+    @Override
     public int getMove (BigBoard bigBoard) {
         if (!rulesDisplayed) {
             this.printGameHelpInfo();
@@ -68,20 +91,20 @@ public class HumanPlayer extends Player {
         String response = null;
         int row = 0;
         int col = 0;
-        char statusTokenOfDesiredBoard;
+        char statusTokenOfDesiredBoard = 'T';
         do {
             try {
                 response = moveInputScanner.nextLine();
                 int userMove = Integer.parseInt(response);
                 if (userMove > 9 || userMove < 1) {
-                    System.out.println("Great. You broke it.");
-                    assert(false);
+                    System.out.println("Your move must be between 1 and 9");
+                    continue;
                 }
                 userMove--; //computerized to 0-8;
 
                 //Check with the board to make sure it's not full.
-                row = userMove/3;
-                col = userMove%3;
+                row = userMove / 3;
+                col = userMove % 3;
 
             } catch (NumberFormatException ex) {
                 if (response.equals("exit")) {
@@ -95,10 +118,14 @@ public class HumanPlayer extends Player {
             statusTokenOfDesiredBoard = bigBoard.get(row, col).getStatusToken();
         } while (statusTokenOfDesiredBoard == 'T' || statusTokenOfDesiredBoard == 'W'); //if the board selected is full, send them back
 
-        int answer = row*3 + col + 1;
+        int answer = row * 3 + col + 1;
         return answer;
     }
 
+    /**
+     * This method prints basic help info for the user. It will be triggered once each time the program runs, and if the
+     * user enters "help" or any other non-number input other than "rules" or "exit".
+     */
     public void printGameHelpInfo() {
         System.out.println("Welcome to Ultimate Tic Tac Toe instructions/help info.");
         System.out.println("Navigating this program:");
@@ -108,12 +135,12 @@ public class HumanPlayer extends Player {
         System.out.println("If you enter \"exit\" (without quotes) the program will exit.");
         System.out.println("If you enter \"help\" you will see this message again.");
         System.out.println("If you enter \"rules\" you will see the rules.");
-        numTimesHelpTriggered++;
-        if (numTimesHelpTriggered > 3) {
-            System.out.println("You seem to be having trouble. Please contact Paul <Address Redacted> for help.");
-        }
     }
 
+    /**
+     * This method will be called any time the user enters "rules" as their move.
+     * It gives the user instructions about the game rules, with an option to display examples.
+     */
     public void printGameRules() {
         System.out.println("Welcome to Ultimate Tic Tac Toe rules.");
         System.out.println("Ultimate Tic-Tac-Toe is a variant of Tic-Tac-Toe (TTT).");
@@ -159,6 +186,10 @@ public class HumanPlayer extends Player {
         rulesDisplayed = true;
     }
 
+    /**
+     * This method shows examples to the user to demonstrate the rules of Ultimate Tic Tac Toe. The user can call this
+     * method from within printGameRules().
+     */
     public void showRulesExample () {
         BigBoard displayBoard = new BigBoard();
         System.out.println("If Player 1 places their X here:");
@@ -198,6 +229,4 @@ public class HumanPlayer extends Player {
         System.out.println(displayBoard);
         scanner.waitForInput();
     }
-
-
 }

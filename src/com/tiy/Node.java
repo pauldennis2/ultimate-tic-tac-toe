@@ -1,26 +1,39 @@
 package com.tiy;
 
+import org.omg.CORBA.NO_IMPLEMENT;
+
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by erronius on 12/13/2016.
+ * Created by pauldennis on 12/13/2016.
+ *
+ * This Node/Tree structure is designed to be used with a "scoreable" payload (i.e. T, the generic type). Using the
+ * getMinOfChildrensMax, getMaxOfChildrensMin, getMaxChildrenScore, getMinChildrenScore, we then traverse the tree
+ * using a "minimax"/"maximin" algorithm. This is not yet fully implemented.
+ * See TreeTester for unit tests.
  */
 public class Node<T> {
     private Node<T> parent;
     private T me; //"payload" or "value".
     private List<Node> children;
     private int score;
-    private int maxChildrenScore;
-    private int minChildrenScore;
 
+    /**
+     *
+     * @param parent null if this is the root
+     * @param me the payload/generic contained in the Node
+     */
     public Node (Node<T> parent, T me) {
         this.parent = parent;
         children = new LinkedList<>();
         this.me = me;
     }
 
-    //The old children are now cast adrift
+    /**
+     * Sets the given list as the children of the node. <b>Any old children will be discarded</b>.
+     * @param children List to set as the new children of the node
+     */
     public void setChildren (List<T> children) {
         this.children = new LinkedList<Node>();
         for (T t : children) {
@@ -29,6 +42,11 @@ public class Node<T> {
         }
     }
 
+    /**
+     * This method assists a minimax/maximin search/algorithm.
+     * @return the minimum score of the max of the grandchildren's scores
+     * @throws NoChildrenException if the node has no children
+     */
     public int getMinOfChildrensMax () throws NoChildrenException {
         int bestScore = Integer.MAX_VALUE;
         if (children.size() == 0) {
@@ -39,10 +57,14 @@ public class Node<T> {
                 bestScore = child.getMaxChildrenScore();
             }
         }
-        maxChildrenScore = bestScore;
-        return maxChildrenScore;
+        return bestScore;
     }
 
+    /**
+     * This method assists a minimax/maximin search/algorithm.
+     * @return the maximum score of the min of the grandchildren's scores
+     * @throws NoChildrenException if the node has no children
+     */
     public int getMaxOfChildrensMin () throws NoChildrenException {
         int bestScore = Integer.MIN_VALUE;
         if (children.size() == 0) {
@@ -53,11 +75,13 @@ public class Node<T> {
                 bestScore = child.getMinChildrenScore();
             }
         }
-        minChildrenScore = bestScore;
-        return minChildrenScore; //These are messing with variables they shouldn't be. need to revisit these functions
-        //They should probably throw a NoChildException if this method is called when they have no children
+        return bestScore;
     }
 
+    /**
+     *
+     * @return The payload, generic type contained in the Node.
+     */
     public T getMe () {
         return me;
     }
@@ -70,6 +94,10 @@ public class Node<T> {
         return parent;
     }
 
+    /**
+     * Figuring out the score is the job of the implementing class.
+     * @return the score.
+     */
     public int getScore () {
         return score;
     }
@@ -78,30 +106,46 @@ public class Node<T> {
         this.score = score;
     }
 
+    /**
+     * Returns the maximum score of the node's children.
+     * @return The max of its children's scores.
+     * @throws NoChildrenException if the node has no children
+     */
     public int getMaxChildrenScore () throws NoChildrenException {
         int bestScore = Integer.MIN_VALUE;
+        if (children.size() == 0) {
+            throw new NoChildrenException();
+        }
         for (Node node : children) {
             if (node.getScore() > bestScore) {
                 bestScore = node.getScore();
             }
         }
-        maxChildrenScore = bestScore;
-        return maxChildrenScore;
+        return bestScore;
     }
 
+    /**
+     * Returns the minimum score of the node's children.
+     * @return The min of its children's scores.
+     * @throws NoChildrenException if the node has no children
+     */
     public int getMinChildrenScore () throws NoChildrenException {
         int bestScore = Integer.MAX_VALUE;
-        if (children != null) {
-            for (Node node : children) {
-                if (node.getScore() < bestScore) {
-                    bestScore = node.getScore();
-                }
+        if (children.size() == 0) {
+            throw new NoChildrenException();
+        }
+        for (Node node : children) {
+            if (node.getScore() < bestScore) {
+                bestScore = node.getScore();
             }
         }
-        minChildrenScore = bestScore;
-        return minChildrenScore;
+        return bestScore;
     }
 
+    /**
+     * Prunes the unwantedChild from the list of children for this node.
+     * @param unwantedChild child to be discarded
+     */
     public void discardChild (Node<T> unwantedChild) {
         for (Node child : children) {
             if (child.equals(unwantedChild)) {

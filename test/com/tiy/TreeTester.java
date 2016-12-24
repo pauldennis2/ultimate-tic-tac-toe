@@ -36,8 +36,20 @@ public class TreeTester {
 
     @Test
     public void testTreePruning() {
-        // TODO write
-        assertTrue(false);
+        Node<Integer> root = new Node<Integer>(null, 10);
+        Integer n1 = 10;
+        Integer n2 = 21;
+        Integer n3 = 32;
+        firstIntList.add(n1);
+        firstIntList.add(n2);
+        firstIntList.add(n3);
+        root.setChildren(firstIntList);
+        root.discardChild(root.getChildren().get(1));
+        int sumOfChildren = 0;
+        for (Node<Integer> child : root.getChildren()) {
+            sumOfChildren += child.getMe();
+        }
+        assertEquals(10 + 32, sumOfChildren);
     }
 
     @Test

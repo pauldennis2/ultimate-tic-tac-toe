@@ -42,7 +42,7 @@ Features:
 * Play with 0, 1, or 2 human players (remaining spots filled by bots that move randomly)
 
 Features In Development:
-* Smart AI - one of the main extension goals of the project was to develop a heuristic based
+* Smart AI - one of the main extension goals of the project was to develop a heuristic based AI
 * Wildcard - how does a tied square count? The obvious answer would be that it counts for neither player, but with the
 "Wildcard" rule variant, any square that is tied (full and with no winner) counts for both players.
 
@@ -61,12 +61,16 @@ and just 2 for the edges). I then built a tree structure representing the possib
 attempting to navigate this tree with a "minimax" algorithm. Eventually I will try to implement an "Alpha Beta Pruning"
 algorithm to make the tree search more efficient.
 
+This project was originally developed before we covered unit testing in class. The testSmartBoardEvaluation is an
+example of this (as is testWildCardDetection()). The Node/Tree structure was developed with unit tests/TDD
+(see TreeTester).
+
 Further reading/Extra files:
 How many possibly starting moves are there in a regular game of Tic-Tac-Toe? Nine, right? But how many *distinct* moves
 are there? The answer is three (corner, edge, or middle). All starting options are rotationally symmetrical in one of
 those categories. As part of considering how to develop a smart AI, one goal is to determine if there are good starting
 moves, as in chess, or if some squares are more valuable than others. This is trickier than it seems however; if you
-control a bunch of middle squares in the boards, that will give you an edge - but you will have given your opponent
+control a bunch of middle squares in the boards, that will give you an advantage - but you will have given your opponent
 control of the middle board (less than ideal). Supporting this, I have determined that there are 15 possible starting
 moves in Ultimate (this number might be reducible, but it's a good start. These moves are mapped out in "moves.ods".
 

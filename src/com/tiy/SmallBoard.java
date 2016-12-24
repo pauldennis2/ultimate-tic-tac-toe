@@ -3,7 +3,9 @@ package com.tiy;
 import java.util.Random;
 
 /**
- * Created by erronius on 12/9/2016.
+ * Created by pauldennis on 12/9/2016.
+ *
+ * This represents an individual Tic-Tac-Toe board
  */
 public class SmallBoard {
 
@@ -24,6 +26,12 @@ public class SmallBoard {
         return board;
     }
 
+    /**
+     * Gets the status token of the board.
+     * @return the token representing the status. ' ' if no winner, the token of the winner if there is one ('X' or 'O'
+     * usually). In case of a tie (the board is full and there is no winner - an unwinnable non-full board is not
+     * considered a tie) 'T', or 'W' if using the wildcard rule.
+     */
     public char getStatusToken () {
         char rowWinningToken = rowWinner(board);
         char columnWinningToken = columnWinner(board);
@@ -44,11 +52,19 @@ public class SmallBoard {
         return statusToken;
     }
 
+    /**
+     * Get the token at the given location
+     * @param row row of the square (0-2)
+     * @param col column of the square (0-2)
+     * @return the token at the given location
+     */
     public char get (int row, int col) {
         return board[row][col];
     }
 
-
+    /**
+     * Clears the board. Should only be used for debugging/with care.
+     */
     public void clear () {
         board[0][0] = ' ';
         board[0][1] = ' ';
@@ -61,14 +77,26 @@ public class SmallBoard {
         board[2][2] = ' ';
     }
 
-    public boolean placeToken (int row, int col, char c) {
+    /**
+     * Attempts to place the given token at the given location
+     * @param row row of the square (0-2)
+     * @param col column of the square (0-2)
+     * @param token token to be placed
+     * @return true if successfully placed, false otherwise
+     */
+    public boolean placeToken (int row, int col, char token) {
         if (board[row][col] == ' ') {
-            board[row][col] = c;
+            board[row][col] = token;
             return true;
         }
         return false;
     }
 
+    /**
+     * Helper method for getStatusToken()
+     * @param thisBoard board to check
+     * @return token of a row winner if one exists, ' ' otherwise
+     */
     private static char rowWinner (char[][] thisBoard) {
         for (int row = 0; row < 3; row++) {
             char c = thisBoard[row][0];//Starting from the leftmost char in the row
@@ -84,6 +112,11 @@ public class SmallBoard {
         return ' ';
     }
 
+    /**
+     * Helper method for getStatusToken()
+     * @param thisBoard Board to check
+     * @return token of a column winner if one exists, ' ' otherwise
+     */
     private static char columnWinner (char[][] thisBoard) {
         for (int column = 0; column < 3; column++) {
             char c = thisBoard[0][column];//Starting from the top char in the column
@@ -98,6 +131,12 @@ public class SmallBoard {
         }
         return ' ';
     }
+
+    /**
+     * Helper method for getStatusToken()
+     * @param thisBoard Board to check
+     * @return token of a diagonal winner if one exists, ' ' otherwise
+     */
     private static char diagonalWinner (char[][] thisBoard) {
         char c = thisBoard[0][0];
         if (c != ' ') {
@@ -118,10 +157,16 @@ public class SmallBoard {
         return ' ';
     }
 
-    //@TODO this needs fixing. Wildcards aren't working. not sure why
-
-    //Does this method care about the order of the tokens? I don't think so, need to make sure
-    //Also note that this method should only ever be called from a status board.
+    /**
+     * @TODO this needs fixing. Wildcards aren't working. not sure why
+     * @param p1Token Player 1's token
+     * @param p2Token Player 2's token
+     * @return the status token
+     *
+     * Notes:
+     * Does this method care about the order of the tokens? I don't think so, need to make sure
+     * Also note that this method should only ever be called from a status board.
+     */
     public char getStatusTokenWithWildCards (char p1Token, char p2Token) {
         char[][] boardWithFirstToken = new char[3][3];
         char[][] boardWithSecondToken = new char[3][3];
@@ -164,7 +209,6 @@ public class SmallBoard {
         return ' '; //nobody has won yet
     }
 
-
     private boolean boardIsFull () {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
@@ -185,7 +229,11 @@ public class SmallBoard {
         return response;
     }
 
-    public String[] toStringArray () {
+    /**
+     * Helper method for toString()
+     * @return a String[] with each line of the board
+     */
+    private String[] toStringArray () {
         String [] response = new String[5];
         response [0] = board[0][0] + "|" + board[0][1] + "|" + board[0][2];
         response [1] = "-----";
@@ -196,9 +244,9 @@ public class SmallBoard {
     }
 
     /**
-     *
-     * @param numTokens
-     * @return
+     * See BigBoard.createRandomBigBoard()
+     * @param numTokens the number of tokens to attempt to place
+     * @return A SmallBoard with 1-numTokens tokens placed in it
      */
     public static SmallBoard createRandomSmallBoard (int numTokens) {
         SmallBoard smallBoard = new SmallBoard();

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by erronius on 12/9/2016.
+ * Created by pauldennis on 12/9/2016.
+ *
+ * Class that represents the entire board. Includes the statusBoard, a SmallBoard representing the status of each of
+ * the individual SmallBoards.
  */
 public class BigBoard {
 
@@ -26,11 +29,19 @@ public class BigBoard {
             }
         }
     }
-    //Can be null!
+
+    /**
+     * Returns the most recent move made on the board.
+     * @return the most recent move - null if no moves entered yet
+     */
     public MoveLocation getMostRecentMove () {
         return mostRecentMove;
     }
 
+    /**
+     * Returns the current board number.
+     * @return current small board number in 1-9 format; 0 if the board is open (see rules)
+     */
     public int getCurrentBoardNum () {
         if (mostRecentMove == null) {
             return 0; //If there have not been any moves, the board is "open" (0)
@@ -42,11 +53,14 @@ public class BigBoard {
         if (boardArray[row][col].getStatusToken() != ' ') {
             return 0;
         } else {
-            return (row*3 + col + 1);
+            return row * 3 + col + 1;
         }
     }
 
-
+    /**
+     * This method is ONLY for testing purposes and should not be called under any normal circumstance during gameplay.
+     * @param loc the location to set
+     */
     public void setMostRecentMove (MoveLocation loc) {
         System.out.println("Warning from bigBoard.setMostRecentMove():");
         System.out.println("You shouldn't be using this except for testing.");
@@ -57,6 +71,13 @@ public class BigBoard {
         return statusBoard;
     }
 
+    /**
+     * "Edge" boards are marked with E's:
+     * CEC<br>
+     * EME<br>
+     * CEC
+     * @return All the SmallBoards that are considered edge boards.
+     */
     public ArrayList<SmallBoard> getEdgeBoards () {
         ArrayList<SmallBoard> edgeBoards = new ArrayList<SmallBoard>();
         //Edge boards are: 0,1 1,0 1,2 2,1
@@ -67,6 +88,13 @@ public class BigBoard {
         return edgeBoards;
     }
 
+    /**
+     * "Corner" boards are marked with C's:
+     * CEC<br>
+     * EME<br>
+     * CEC
+     * @return All the SmallBoards that are considered corner boards.
+     */
     public ArrayList<SmallBoard> getCornerBoards () {
         ArrayList<SmallBoard> cornerBoards = new ArrayList<SmallBoard>();
         //Corner boards are: 0,0 0,2 2,0 2,2
@@ -81,6 +109,9 @@ public class BigBoard {
         return tiedSquareCountsForBoth;
     }
 
+    /**
+     * Flips the wildcard rule.
+     */
     public void changeTiedSquareRule () {
         tiedSquareCountsForBoth = !tiedSquareCountsForBoth;
         System.out.print("Wildcard Rule is now ");
@@ -91,11 +122,23 @@ public class BigBoard {
         }
     }
 
+    /**
+     * Returns the SmallBoard at row-col
+     * @param row the row, 0-2
+     * @param col the column, 0-2
+     * @return the SmallBoard at that location
+     */
     public SmallBoard get (int row, int col) {
         return boardArray[row][col];
     }
 
-    public String[] toStringArray () {
+    /**
+     * This method is a helper method for the toString() method.
+     *
+     * TODO: change this method to work with StringBuilders to be more efficient in memory
+     * @return a String[] with the lines of the board
+     */
+    private String[] toStringArray () {
         String[] response = new String[19];
 
         int line = 0;
@@ -128,6 +171,10 @@ public class BigBoard {
         return response;
     }
 
+    /**
+     *
+     * @return String representation of the board including the statusBoard and key
+     */
     public String toString () {
         String response = "";
         for (String line : this.toStringArray()) {
@@ -136,6 +183,16 @@ public class BigBoard {
         return response;
     }
 
+    /**
+     * Attempts to place the token at the given location (see params). Can throw an IndexArrayOutOfBoundsException with
+     * bad inputs, but by the time the method has been called, that should already have been screened out.
+     * @param bigRow row of the SmallBoard
+     * @param bigCol column of the SmallBoard
+     * @param smallRow row of the square within the given SmallBoard
+     * @param smallCol column of the square within the given SmallBoard
+     * @param token token to place at the location
+     * @return true if the method was able to successfully place the token; false otherwise
+     */
     public boolean placeToken (int bigRow, int bigCol, int smallRow, int smallCol, char token) {
         if (boardArray[bigRow][bigCol].placeToken(smallRow, smallCol, token)) { //Attempts to place the token in the corresponding SmallBoard
             mostRecentMove = new MoveLocation(bigRow, bigCol, smallRow, smallCol);
@@ -146,10 +203,10 @@ public class BigBoard {
     }
 
     /**
-     *
+     * Updates the statusBoard and passes back an int with the status.
+     * TODO: Change this to work with an enum
      * @return -1 if tied; 1 if 1, 0 if still going
      */
-
     public int statusUpdate () {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -173,7 +230,7 @@ public class BigBoard {
     /**
      *
      * @param token - the token to place
-     * @return an ArrayList<BigBoard> of possibilities of what the board will look like after the move
+     * @return an ArrayList<BigBoard> of possibilities of what the board will look like after all possible moves
      */
     public ArrayList<BigBoard> getPossibleMoves (char token) {
         int currentSmallBoardNum = this.getCurrentBoardNum();
@@ -213,6 +270,10 @@ public class BigBoard {
         return possibleMoves;
     }
 
+    /**
+     * Copies this.
+     * @return A BigBoard object that is a distinct copy of this. Used to build the AI tree.
+     */
     public BigBoard copy () {
         BigBoard copy = new BigBoard();
         for (int row = 0; row < 3; row++) {
@@ -228,7 +289,9 @@ public class BigBoard {
         return copy;
     }
 
-    //Clears entire board! Use with caution.
+    /**
+     * Clears the entire board. Should be used with caution/for testing purposes.
+     */
     public void clear () {
         System.out.println("Board cleared.");
         mostRecentMove = null;
