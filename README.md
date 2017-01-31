@@ -1,9 +1,9 @@
-<pre>Welcome to the Ultimate Tic Tac Toe Readme. Ultimate Tic Tac Toe is a recursive version of regular tic-tac-toe ("TTT").
+Welcome to the Ultimate Tic Tac Toe Readme. Ultimate Tic Tac Toe is a recursive version of regular tic-tac-toe ("TTT").
 The game board takes the shape of a large TTT board, with each square containing its own regular TTT board. Players take
 turns placing tokens on the board as in regular TTT - but with a twist. The location of the token you place within the
 small board determines which small board the opponent can move in. The first player can move anywhere. For example,
 let's say X goes first and chooses the top-middle small board, middle square:
-
+<pre>
  | | || | | || | |
 -----||-----||-----
  | | || |X| || | |     Key:
@@ -23,7 +23,7 @@ let's say X goes first and chooses the top-middle small board, middle square:
  | | || | | || | |
 -----||-----||-----
  | | || | | || | |
-
+</pre>
 O can now go anywhere in the middle board. If they choose the bottom left square, then X's next play would be in the
 bottom left board. The objective of the game is still to get three in a row - three boards. The "Overall Status Board"
 shows which squares have been won. If a player would be sent to a board that has already been won (or is full), they may
@@ -77,4 +77,3 @@ What does BigBoard sound like? Open BigBoard.txt for a clue.
 
 Thanks for reading!
 Paul Dennis
-</pre>
